@@ -5,9 +5,7 @@ package cs2263_hw01;
 
 import org.apache.commons.cli.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -135,9 +133,13 @@ public class App {
                 .build());
 
         CommandLineParser parser = new DefaultParser();
+        
+        /* I added some escape codes for formatting the text to make it look better.
+            Colors didn't want to work though */
         String clear = "\033[0;0m";
         String bold = "\033[0;1m";
         String batchFile = "";
+        String fileLocation = "";
         String expression = "";
         double result = 0.0;
         String batchResults = "";
@@ -148,10 +150,14 @@ public class App {
 
         try {
             CommandLine cmd = parser.parse(options, args);
+
+            /* Check to see if there are any arguments passed in.
+               If not, then just skip down to the console expression evaluator. */
             if (args.length != 0) {
                 if (cmd.hasOption("h")) {
                     System.out.println(getHelp());
                 } else if (cmd.hasOption("b") || cmd.hasOption("o")) {
+                    /* Batch process a file with evaluations */
                     if (cmd.hasOption("b")) {
                         String batch = cmd.getOptionValue("b");
                         batchFile = "src/main/java/cs2263_hw01/" + batch;
@@ -164,9 +170,15 @@ public class App {
                             batchResults += expression + " = " + result + "\n";
                         }
                     }
+                    /* Write out to the file specified. */
                     if (cmd.hasOption("o")) {
                         String output = cmd.getOptionValue("o");
-                        System.out.println("Output value: " + output);
+                        fileLocation = "src/main/java/cs2263_hw01/" + output;
+                        BufferedWriter outputFile = new BufferedWriter(new FileWriter(fileLocation));
+                        outputFile.write(batchResults);
+                        outputFile.flush();
+                        outputFile.close();
+                        System.out.println("The file at: " + fileLocation + " has been written to.\n");
                     }
                 }
             }
@@ -190,6 +202,7 @@ public class App {
                 }
             }
         }
+        /* Catch the different exceptions that could pop up. */
         catch (ParseException pe) {
             System.out.println("Parse Error. Bad argument or missing required argument.");
         }
@@ -197,7 +210,8 @@ public class App {
             System.out.println("File not found...\nPlease enter in an existing text file located in " +
                     "the same directory as App.java");
         }
-
-
+        catch (IOException ioEx) {
+            System.out.println("We encountered an error while writing to " + fileLocation);
+        }
     }
 }

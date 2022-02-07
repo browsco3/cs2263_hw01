@@ -25,5 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	- Batch expression processing capability to App.java
 
 ## [1.1.1]
-	##Added
+	## Added
 	- I forgot to add CHANGELOG.md to the 1.1.0 release.
+---
+## [1.2.0] - 2022-2-6
+	### Added
+	- Functionality for outputting the batch expression evaluation results to a file.
