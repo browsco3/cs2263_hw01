@@ -6,15 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 ## [0.0.1] - 2022-1-30
 ### Added
-- The base app.
-- Removed the default App.java guts.
-- Added the appropriate documentation files.
+	- The base app.
+	- Removed the default App.java guts.
+	- Added the appropriate documentation files.
 ---
 ## [1.0.0] - 2022-2-6
 ### Added
-- Apache commons cli dependency
-- Code to get the cli running
-- Options for the cli:
-1. -h, --help	To display the help message.
-2. -b, --batch	Currently just outputs the argument passed after the initial.
-3. -o, --output	Currently just outputs the argument passed after the initial.
+	- Apache commons cli dependency
+	- Code to get the cli running
+	- Options for the cli:
+		1. -h, --help	To display the help message.
+		2. -b, --batch	Currently just outputs the argument passed after the initial.
+		3. -o, --output	Currently just outputs the argument passed after the initial.
+---
+## [1.1.0] - 2022-2-6
+### Added
+	- Expression evaluator functionality to App.java
+	- Batch expression processing capability to App.java
