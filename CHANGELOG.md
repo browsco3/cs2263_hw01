@@ -5,13 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 ## [0.0.1] - 2022-1-30
-### Added
+	### Added
 	- The base app.
 	- Removed the default App.java guts.
 	- Added the appropriate documentation files.
 ---
 ## [1.0.0] - 2022-2-6
-### Added
+	### Added
 	- Apache commons cli dependency
 	- Code to get the cli running
 	- Options for the cli:
@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 		3. -o, --output	Currently just outputs the argument passed after the initial.
 ---
 ## [1.1.0] - 2022-2-6
-### Added
+	### Added
 	- Expression evaluator functionality to App.java
 	- Batch expression processing capability to App.java
+
+## [1.1.1]
+	##Added
+	- I forgot to add CHANGELOG.md to the 1.1.0 release.
