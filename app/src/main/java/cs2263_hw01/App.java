@@ -5,10 +5,16 @@ package cs2263_hw01;
 
 import org.apache.commons.cli.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
 public class App {
 
-    //method
-
+    // Methods
     public static String getHelp() {
         String bold = "\033[0;1m";
         String clear = "\033[0;0m";
@@ -17,9 +23,92 @@ public class App {
                 bold + "OPTIONS\t" + clear + "\n" +
                 "\t-h, --help\t\tDisplays this help message.\n" +
                 "\t-b, --batch  <file>\tAllows for batch processing of expressions through an input file.\n" +
+                "\t\t\t\t*" + bold + "NOTE" + clear + "* The input file should be in the same directory as app.java\n" +
                 "\t-o, --output <file>\tOutputs the evaluators data to a file.\n\n" +
                 "Copyright 2022 Scott Brown";
         return help;
+    }
+
+    public static double eval(String operator, double first, double second) {
+        switch (operator) {
+            case "+":
+                return first + second;
+            case "-":
+                return first - second;
+            case "*":
+                return first * second;
+            case "/":
+                if (second == 0) {
+                    throw new IllegalArgumentException("You cannot divide by zero");
+                }
+                return first / second;
+        }
+        return 0;
+    }
+
+    public static double breakUpExpression(String expression) {
+        String holder = null;
+        Queue<Integer> numbers = new LinkedList<>();
+        Queue<Character> operators = new LinkedList<>();
+
+        for (int pos = 0; pos < expression.length(); pos++) {
+            char temp_char = expression.charAt(pos);
+
+            if ((int) temp_char >= 48 && (int) temp_char <= 57) {
+                if (holder == null) {
+                    holder = String.valueOf(temp_char);
+                }
+                else {
+                    holder = holder + temp_char;
+                }
+            }
+            // Check to see if the char is not a number.  Also handles numbers longer than one digit.
+            if (!((int) temp_char >= 48 && (int) temp_char <= 57) || pos + 1 == expression.length()) {
+
+                if (!(holder == null)) {
+                    numbers.add(Integer.valueOf(holder));
+                    holder = null;
+                }
+
+                if (temp_char == '+' || temp_char == '-' || temp_char == '*' || temp_char == '/') {
+                    operators.add(temp_char);
+                }
+            }
+        }
+
+        int run_size = operators.size();
+        String output_expr = "";
+        double result = 00.0;
+        double curr_num = 00.0;
+        double next_num = 00.0;
+
+
+        for (int run = 0; run < run_size; run++) {
+            if (curr_num == 00.0) {
+                curr_num = numbers.remove();
+                next_num = numbers.remove();
+            }
+            else {
+                curr_num = next_num;
+                if (!(numbers.isEmpty())) {
+                    next_num = numbers.remove();
+                }
+            }
+
+            int curr_op;
+            if (!(operators.isEmpty())) {
+                curr_op = operators.remove();
+            }
+            else { curr_op = ' ';}
+
+            if (result == 00.0) {
+                result = eval(Character.toString(curr_op), curr_num, next_num);
+            }
+            else {
+                result = eval(Character.toString(curr_op), result, next_num);
+            }
+        }
+        return result;
     }
 
     public static void main(String[] args) {
@@ -46,26 +135,69 @@ public class App {
                 .build());
 
         CommandLineParser parser = new DefaultParser();
+        String clear = "\033[0;0m";
+        String bold = "\033[0;1m";
+        String batchFile = "";
+        String expression = "";
+        double result = 0.0;
+        String batchResults = "";
+        boolean running = true;
+        String welcomeMessage = bold + "Welcome to the Left-to-Right math evaluator." + clear +
+                bold + "\n**NOTE** Enter q to quit." + clear +
+                "\nPlease enter an expression: ";
 
         try {
             CommandLine cmd = parser.parse(options, args);
+            if (args.length != 0) {
+                if (cmd.hasOption("h")) {
+                    System.out.println(getHelp());
+                } else if (cmd.hasOption("b") || cmd.hasOption("o")) {
+                    if (cmd.hasOption("b")) {
+                        String batch = cmd.getOptionValue("b");
+                        batchFile = "src/main/java/cs2263_hw01/" + batch;
+                        Scanner scan = new Scanner(new File(batchFile));
 
-            if (cmd.hasOption("h")) {
-                System.out.println(getHelp());
-            }
-            else if (cmd.hasOption("b") || cmd.hasOption("o")) {
-                if (cmd.hasOption("b")) {
-                    String batch = cmd.getOptionValue("b");
-                    System.out.println("Batch value: " + batch);
+                        while (scan.hasNextLine()) {
+                            expression = scan.nextLine();
+                            result = breakUpExpression(expression);
+                            System.out.println(expression + " = " + result);
+                            batchResults += expression + " = " + result + "\n";
+                        }
+                    }
+                    if (cmd.hasOption("o")) {
+                        String output = cmd.getOptionValue("o");
+                        System.out.println("Output value: " + output);
+                    }
                 }
-                if (cmd.hasOption("o")) {
-                    String output = cmd.getOptionValue("o");
-                    System.out.println("Output value: " + output);
+            }
+
+            /* This is the main loop. */
+            else {
+                System.out.println(welcomeMessage);
+                while (running) {
+                    Scanner scan = new Scanner(System.in);
+                    expression = scan.nextLine();
+
+                    if (expression.equals("q")) {
+                        running = false;
+                        System.out.println("Goodbye!");
+                    }
+
+                    if (running) {
+                        result = breakUpExpression(expression);
+                        System.out.println(expression + " = " + result);
+                    }
                 }
             }
         }
         catch (ParseException pe) {
-                System.out.println("Parse Error. Bad argument or missing required argument.");
+            System.out.println("Parse Error. Bad argument or missing required argument.");
         }
+        catch (FileNotFoundException fnf) {
+            System.out.println("File not found...\nPlease enter in an existing text file located in " +
+                    "the same directory as App.java");
+        }
+
+
     }
 }
