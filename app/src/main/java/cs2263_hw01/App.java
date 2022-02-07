@@ -14,6 +14,10 @@ public class App {
 
     // Methods
     public static String getHelp() {
+        /**
+         * This method returns a help message.  I made it to clean things up a little.
+         * @return Returns a string with a help message that has some escape code formatting.
+         */
         String bold = "\033[0;1m";
         String clear = "\033[0;0m";
         String help = bold + "NAME\t\t" + clear + "Expression Evaluator\n\n" +
@@ -28,6 +32,13 @@ public class App {
     }
 
     public static double eval(String operator, double first, double second) {
+        /**
+         * This method takes in two doubles and an operator.  It performs the associated operation
+         * on the doubles and returns the result.
+         * @param operator  The operator for the evaluation to use.
+         * @param first  The first double to use in the evaluation.
+         * @param second  The second double to use in the evaluation.
+         */
         switch (operator) {
             case "+":
                 return first + second;
@@ -108,6 +119,8 @@ public class App {
         }
         return result;
     }
+
+
 
     public static void main(String[] args) {
         Options options = new Options();
@@ -197,6 +210,7 @@ public class App {
 
                     if (running) {
                         result = breakUpExpression(expression);
+                        batchResults += expression + " = " + result;
                         System.out.println(expression + " = " + result);
                     }
                 }
